@@ -15,11 +15,8 @@ class Author(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-
-
     def __str__(self):
         return self.full_name()
-
 
 # Create your models here.
 class Post(models.Model):
@@ -34,8 +31,11 @@ class Post(models.Model):
     author = models.ForeignKey(
         Author,on_delete=models.SET_NULL,null=True,related_name="posts")
     # many to many
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
+    
 
+    def __str__(self):
+        return self.title
 
 class Comment(models.Model):
     user_name = models.CharField(max_length=150)
@@ -43,4 +43,5 @@ class Comment(models.Model):
     text = models.TextField(max_length=400) 
     post = models.ForeignKey(
         Post,on_delete=models.CASCADE,related_name="comments")
+
 

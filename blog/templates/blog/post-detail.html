@@ -13,15 +13,32 @@
 {% endblock  %}
 
 {% block content %}
+{% if comment_form.errors %}
+<div id="alert">
+ <h2>Saving the Comment failed</h2> 
+ <p>PLease check the comment form below the post and fix your errors.</p>
+ <a href="#comment-form">Fix!</a>
+</div>
+{% endif %}
+
    <section id="summary">
     <h2>{{post.title}}</h2>
     <div>
-        {% for tag in post_tag %}
-        <span class= "tag"> {{tag.caption}}</span>
-
+        {% for tag in post_tags %}
+        <span class= "tag"> {{ tag.caption }} </span>
         {% endfor %}
-
     </div>
+
+    <div id="read-later">
+        <form action="{% url "read-later" %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value="{{post.id}}" name="post_id">
+            <button>Read Later</button>
+        </form>
+    </div> 
+
+
+
     <article>
         <img src="{{ post.image.url }}" alt="{{ post.title }}"/>
         <adderss> By <a href="mailto:{{ post.author.email_address  }}">{{ post.author }}</a></adderss>
@@ -31,15 +48,29 @@
     </article>
    </section>
 
+
    <main>
     {{ post.content|linebreaks }}
    </main>
 
+   <section id="comments">
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <h2>{{ comment.user_name }}</h2>
+            <p>{{ comment.text|linebreaks }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+   </section>
+
+
    <section id="comment-form">
     <h2>Your Comment</h2>
-    <form >
+    <form action="{% url "post-detail-page" post.slug %}" method= POST>
+        {% csrf_token %}
         {% for form_field in comment_form%}
-        <div class="form-control">
+        <div class="form-control {% if form_field.errors %}invalid{% endif %} "> 
             {{ form_field.label_tag }}
             {{ form_field }}
             {{ form_field.errors }}
@@ -48,4 +79,6 @@
         <button>Save Comment</button>
     </form>
     </section>
+
+
 {% endblock  %}

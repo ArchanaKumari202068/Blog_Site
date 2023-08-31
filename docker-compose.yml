@@ -1,0 +1,6 @@
+version : "3.3"
+services :
+  web :
+     image : rahulsharma076/my-blog-site:latest
+     ports :
+         - "8000:8000"
